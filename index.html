@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inmortal Gym</title>
+<link rel="icon" type="image/png" href="images/logo-inmortal-2026.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@600;700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07090c;
+    --panel:#12161d;
+    --panel-2:#181e28;
+    --blue:#2f9bff;
+    --blue-deep:#0f5fa8;
+    --bronze:#d4a24c;
+    --paper:#f4f6f9;
+    --slate:#8b96a8;
+    --hairline:rgba(244,246,249,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Work Sans',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  /* grit / concrete-floor texture overlay */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    pointer-events:none;
+    z-index:200;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    font-family:'Cinzel',serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    color:var(--bronze);
+  }
+  h1,h2,h3.impact{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+  }
+
+  /* ---------- Greek key strip ---------- */
+  .meander{
+    width:100%;height:16px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 16V2h11V0h2v7H4v7h7v-2h7v7H0Zm19 0V2h11V0h2v7h-8v7h7v-2h7v7H19Zm19 0V2h11V0h2v7h-8v7h7v-2h4v7H38Z' fill='%23d4a24c'/%3E%3C/svg%3E");
+    background-repeat:repeat-x;background-size:56px 16px;
+  }
+  .meander.blue{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 16V2h11V0h2v7H4v7h7v-2h7v7H0Zm19 0V2h11V0h2v7h-8v7h7v-2h7v7H19Zm19 0V2h11V0h2v7h-8v7h7v-2h4v7H38Z' fill='%232f9bff'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Marquee ticker ---------- */
+  .ticker{
+    background:#000;
+    border-bottom:1px solid var(--hairline);
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .ticker-track{
+    display:inline-flex;
+    animation:scrollTicker 26s linear infinite;
+    padding:10px 0;
+  }
+  .ticker-track span{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:12.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--blue);
+    padding:0 26px;
+    display:inline-flex;
+    align-items:center;
+    gap:26px;
+  }
+  .ticker-track span::after{content:"◆";color:var(--bronze);font-size:9px;}
+  @keyframes scrollTicker{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,9,12,0.9);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--hairline);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand img{width:58px;height:48px;object-fit:contain;}
+  .brand span{font-family:'Anton',sans-serif;font-size:19px;letter-spacing:0.03em;text-transform:uppercase;}
+  .brand span em{font-style:normal;color:var(--blue);}
+  nav.links{display:flex;gap:30px;font-size:13.5px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;}
+  nav.links a{color:var(--slate);transition:color .2s;}
+  nav.links a:hover{color:var(--paper);}
+  .nav-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--blue);color:#050708;
+    font-size:13px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;
+    padding:11px 20px;
+    clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+  }
+  .nav-cta:hover{background:var(--bronze);}
+  .burger{display:none;background:none;border:none;color:var(--paper);font-size:24px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    min-height:92vh;
+    display:flex;align-items:center;
+    background:
+      linear-gradient(100deg, rgba(5,7,10,0.94) 0%, rgba(5,7,10,0.75) 38%, rgba(15,20,26,0.55) 100%),
+      url('images/area-pesas-2026.png') center 32%/cover no-repeat;
+  }
+  .hero-inner{padding:70px 24px 90px;width:100%;}
+  .hero h1{
+    font-size:clamp(58px,10.5vw,132px);
+    line-height:0.88;
+    color:var(--paper);
+  }
+  .hero h1 .accent{color:var(--blue);}
+  .hero h1 .outline{
+    color:transparent;
+    -webkit-text-stroke:2px var(--bronze);
+  }
+  .hero-sub{max-width:460px;margin-top:26px;color:var(--slate);font-size:16px;}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px;}
+  .btn-primary{
+    background:var(--blue);color:#050708;font-weight:700;font-size:14px;
+    letter-spacing:0.03em;text-transform:uppercase;padding:17px 30px;
+    display:inline-flex;align-items:center;gap:10px;
+    clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);
+    border:none;
+  }
+  .btn-primary:hover{background:var(--bronze);}
+  .btn-ghost{
+    border:1px solid var(--hairline);color:var(--paper);
+    font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.03em;
+    padding:17px 30px;
+    clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);
+  }
+  .btn-ghost:hover{border-color:var(--bronze);color:var(--bronze);}
+
+  /* ---------- Section shell ---------- */
+  section{padding:104px 0;}
+  .section-head{max-width:640px;margin-bottom:56px;}
+  .section-head h2{font-size:clamp(34px,5vw,56px);margin-top:10px;}
+  .section-head p{color:var(--slate);margin-top:14px;font-size:15px;}
+
+  /* ---------- Servicios: asymmetric ---------- */
+  .services{display:grid;grid-template-columns:1.3fr 1fr;gap:2px;background:var(--hairline);border:1px solid var(--hairline);}
+  .service{background:var(--panel);padding:44px 38px;position:relative;overflow:hidden;}
+  .service.feature{grid-row:span 2;display:flex;flex-direction:column;justify-content:flex-end;min-height:420px;}
+  .service .ghost-num{
+    font-family:'Anton',sans-serif;font-size:110px;line-height:1;
+    color:rgba(244,246,249,0.05);position:absolute;top:10px;right:18px;
+  }
+  .service.feature .ghost-num{font-size:170px;}
+  .service h3{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;letter-spacing:0.02em;position:relative;z-index:1;}
+  .service.feature h3{font-size:34px;}
+  .service p{color:var(--slate);font-size:14.5px;margin-top:14px;position:relative;z-index:1;max-width:320px;}
+  .service.feature p{font-size:15.5px;max-width:360px;}
+
+  /* ---------- Planes: ticket style ---------- */
+  .plans-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;}
+  .plan-card{
+    background:var(--panel);
+    border:1px solid var(--hairline);
+    clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
+    padding:34px 32px 28px;
+    position:relative;
+  }
+  .plan-card::before{
+    content:"";position:absolute;top:0;left:0;width:100%;height:4px;
+    background:repeating-linear-gradient(90deg,var(--bronze) 0 10px,var(--blue) 10px 20px);
+  }
+  .plan-card h3{
+    font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+    text-transform:uppercase;letter-spacing:0.1em;color:var(--bronze);
+  }
+  .plan-list{margin-top:20px;}
+  .plan-row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:14px 0;border-top:1px dashed var(--hairline);
+  }
+  .plan-row:first-child{border-top:none;}
+  .plan-row .label{font-size:14.5px;color:var(--paper);font-weight:500;}
+  .plan-row .price{
+    font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--blue);
+    font-size:19px;white-space:nowrap;padding-left:14px;
+  }
+  .plan-note{font-size:12.5px;color:var(--slate);margin-top:18px;font-style:italic;}
+  .plan-card.cta-card{
+    background:linear-gradient(135deg,var(--blue-deep),var(--blue));
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .plan-card.cta-card h3{color:#0a1420;}
+  .plan-card.cta-card p{color:rgba(7,9,12,0.75);font-size:14.5px;margin-top:16px;}
+  .plan-card.cta-card .btn-primary{background:#07090c;color:var(--paper);margin-top:22px;align-self:flex-start;}
+  .plan-card.cta-card .btn-primary:hover{background:var(--bronze);color:#07090c;}
+
+  /* ---------- Horario: LED board ---------- */
+  .hours-block{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--hairline);border:1px solid var(--hairline);}
+  .hours-panel{background:var(--panel);padding:44px;}
+  .hours-row{
+    display:flex;justify-content:space-between;padding:20px 0;
+    border-bottom:1px solid var(--hairline);
+  }
+  .hours-row:last-child{border-bottom:none;}
+  .hours-row .day{font-family:'Anton',sans-serif;font-size:16px;text-transform:uppercase;letter-spacing:0.02em;color:var(--slate);}
+  .hours-row .time{
+    font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue);
+    font-size:17px;text-shadow:0 0 14px rgba(47,155,255,0.55);
+  }
+  .hours-photo{position:relative;overflow:hidden;min-height:280px;}
+  .hours-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(0.3) contrast(1.1);}
+  .hours-photo::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(7,9,12,0) 40%,rgba(7,9,12,0.85) 100%);
+  }
+  .gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .gallery-grid img{width:100%;height:260px;object-fit:cover;border:1px solid var(--hairline);}
+
+  /* ---------- Contacto / footer ---------- */
+  .contact{
+    background:var(--blue);
+    color:#07090c;
+    padding:100px 0 40px;
+    clip-path:polygon(0 40px,100% 0,100% 100%,0 100%);
+  }
+  .contact .section-head p, .contact .eyebrow{color:rgba(7,9,12,0.65);}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;margin-top:20px;}
+  .contact-col h3{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.18em;
+    text-transform:uppercase;color:#07090c;margin-bottom:14px;font-weight:800;
+  }
+  .contact-col p{font-size:16px;font-weight:600;}
+  .contact-col a{
+    display:inline-flex;align-items:center;gap:8px;margin-top:8px;
+    font-weight:700;font-size:14px;text-decoration:underline;text-underline-offset:4px;
+  }
+  .foot-bottom{
+    margin-top:70px;padding-top:24px;border-top:1px solid rgba(7,9,12,0.25);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:12.5px;font-weight:600;
+  }
+
+  .login-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--hairline);color:var(--paper);
+    font-size:13px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;
+    padding:10px 18px;background:none;cursor:pointer;
+    clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+  }
+  .login-btn:hover{border-color:var(--bronze);color:var(--bronze);}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    display:none;position:fixed;inset:0;z-index:300;
+    background:rgba(4,5,7,0.82);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal-box{
+    background:var(--panel);border:1px solid var(--hairline);
+    width:100%;max-width:380px;padding:36px 32px;position:relative;
+    clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
+  }
+  .modal-box::before{
+    content:"";position:absolute;top:0;left:0;width:100%;height:4px;
+    background:repeating-linear-gradient(90deg,var(--bronze) 0 10px,var(--blue) 10px 20px);
+  }
+  .modal-close{
+    position:absolute;top:16px;right:18px;background:none;border:none;
+    color:var(--slate);font-size:20px;cursor:pointer;line-height:1;
+  }
+  .modal-close:hover{color:var(--paper);}
+  .modal-box h3{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;margin-bottom:22px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:0.08em;text-transform:uppercase;color:var(--slate);margin-bottom:7px;
+  }
+  .field input, .field select{
+    width:100%;background:var(--panel-2);border:1px solid var(--hairline);
+    color:var(--paper);padding:11px 13px;font-size:14px;font-family:'Work Sans',sans-serif;
+  }
+  .field input:focus, .field select:focus{outline:none;border-color:var(--blue);}
+  .field-error{color:#ff6b6b;font-size:12.5px;margin-top:8px;display:none;}
+  .modal-box button[type="submit"]{width:100%;justify-content:center;margin-top:6px;cursor:pointer;}
+
+  /* ---------- Admin panel ---------- */
+  #adminPanel{display:none;min-height:100vh;}
+  .admin-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 24px;border-bottom:1px solid var(--hairline);
+    background:rgba(7,9,12,0.9);position:sticky;top:0;z-index:40;
+  }
+  .admin-topbar .brand span{font-size:16px;}
+  .admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--hairline);border:1px solid var(--hairline);margin-top:32px;}
+  .admin-stat{background:var(--panel);padding:26px 28px;}
+  .admin-stat .num{font-family:'Anton',sans-serif;font-size:44px;color:var(--blue);}
+  .admin-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);margin-top:4px;}
+  .admin-form{
+    background:var(--panel);border:1px solid var(--hairline);
+    padding:32px;margin-top:32px;
+    display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:18px;align-items:end;
+  }
+  .admin-form .field{margin-bottom:0;}
+  .photo-input{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .photo-preview{
+    width:64px;height:64px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--hairline);background:var(--panel-2);
+  }
+  .photo-input input[type="file"]{font-size:11px;color:var(--slate);max-width:110px;}
+  .admin-form .btn-primary{grid-column:1/-1;justify-content:center;cursor:pointer;}
+  .admin-tools{margin-top:32px;background:var(--panel);border:1px solid var(--hairline);padding:26px;}
+  .admin-tools h3{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;margin-bottom:18px;}
+  .filter-bar,.selection-bar,.message-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .filter-btn,.small-btn{background:var(--panel-2);border:1px solid var(--hairline);color:var(--paper);padding:9px 14px;cursor:pointer;font:600 12px 'Work Sans',sans-serif;text-transform:uppercase;}
+  .filter-btn.active,.filter-btn:hover,.small-btn:hover{border-color:var(--blue);color:var(--blue);}
+  .selection-bar{margin:16px 0;color:var(--slate);font-size:13px;}
+  .message-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;margin-top:18px;}
+  .message-grid .field{margin:0;}
+  .message-grid textarea{width:100%;min-height:120px;resize:vertical;background:var(--panel-2);border:1px solid var(--hairline);color:var(--paper);padding:12px;font:14px 'Work Sans',sans-serif;}
+  .message-grid textarea:focus{outline:none;border-color:var(--blue);}
+  .message-help{font-size:12px;color:var(--slate);margin-top:8px;}
+  .send-summary{font-size:13px;color:var(--bronze);margin-left:auto;}
+  .wa-queue{display:none;margin-top:18px;border-top:1px solid var(--hairline);padding-top:16px;}
+  .wa-queue.open{display:block;}
+  .wa-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--hairline);font-size:14px;}
+  .wa-item a{background:#25d366;color:#06120a;padding:8px 13px;font-size:12px;font-weight:800;text-transform:uppercase;white-space:nowrap;}
+  .table-wrap{margin-top:32px;border:1px solid var(--hairline);overflow-x:auto;}
+  table.members{width:100%;border-collapse:collapse;min-width:820px;}
+  table.members th{
+    text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:0.08em;text-transform:uppercase;color:var(--bronze);
+    padding:16px;border-bottom:1px solid var(--hairline);background:var(--panel);
+  }
+  table.members td{padding:14px 16px;border-bottom:1px solid var(--hairline);font-size:14px;background:var(--panel-2);vertical-align:middle;}
+  table.members img.avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;}
+  .badge{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    padding:4px 10px;text-transform:uppercase;letter-spacing:0.04em;display:inline-block;
+  }
+  .badge.ok{background:rgba(47,155,255,0.16);color:var(--blue);}
+  .badge.soon{background:rgba(212,162,76,0.18);color:var(--bronze);}
+  .badge.late{background:rgba(255,107,107,0.16);color:#ff6b6b;}
+  .del-btn{background:none;border:1px solid var(--hairline);color:var(--slate);font-size:12px;padding:6px 10px;cursor:pointer;}
+  .del-btn:hover{border-color:#ff6b6b;color:#ff6b6b;}
+  .empty-row td{text-align:center;color:var(--slate);padding:40px;}
+
+  @media (max-width:860px){
+    nav.links{display:none;}
+    .burger{display:block;}
+    .services{grid-template-columns:1fr;}
+    .service.feature{grid-row:auto;min-height:0;}
+    .plans-grid{grid-template-columns:1fr;}
+    .hours-block{grid-template-columns:1fr;}
+    .gallery-grid{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr;gap:32px;}
+    .contact{clip-path:none;}
+    .admin-form{grid-template-columns:1fr;}
+    .message-grid{grid-template-columns:1fr;}
+    .login-btn span.txt{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="siteView">
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span>Inscripción $100</span>
+    <span>Mensualidad $550</span>
+    <span>Estudiantes $500</span>
+    <span>Visita $80</span>
+    <span>Informes: 55 3267 9072</span>
+    <span>Inscripción $100</span>
+    <span>Mensualidad $550</span>
+    <span>Estudiantes $500</span>
+    <span>Visita $80</span>
+    <span>Informes: 55 3267 9072</span>
+  </div>
+</div>
+
+<header>
+  <div class="nav wrap">
+    <div class="brand">
+      <img src="images/logo-inmortal-2026.png" alt="Inmortal Gym">
+      <span>Inmortal <em>Gym</em></span>
+    </div>
+    <nav class="links">
+      <a href="#servicios">Servicios</a>
+      <a href="#planes">Planes</a>
+      <a href="#horario">Instalaciones</a>
+      <a href="#ubicacion">Ubicación</a>
+    </nav>
+    <button class="login-btn" id="openLoginBtn" type="button">🔒 <span class="txt">Iniciar sesión</span></button>
+    <a class="nav-cta" href="https://wa.me/525532679072" target="_blank" rel="noopener">Escríbenos</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner wrap">
+    <p class="eyebrow">Fuerza · Disciplina · Resultados</p>
+    <h1>Sin <span class="outline">excusas</span><br><span class="accent">Solo</span> resultados</h1>
+    <p class="hero-sub">Entrena en un gimnasio climatizado, con equipo de cardio, instructor y rutinas incluidos.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://wa.me/525532679072" target="_blank" rel="noopener">Inscríbete ahora →</a>
+      <a class="btn-ghost" href="#planes">Ver precios</a>
+    </div>
+  </div>
+</section>
+
+<div class="meander"></div>
+
+<section id="servicios">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Lo que te ofrecemos</p>
+      <h2>Todo para tu entrenamiento</h2>
+    </div>
+    <div class="services">
+      <div class="service feature">
+        <span class="ghost-num">03</span>
+        <h3>Instructor y rutinas gratis</h3>
+        <p>Recibe orientación del instructor y rutinas sin costo adicional para avanzar con seguridad.</p>
+      </div>
+      <div class="service">
+        <span class="ghost-num">01</span>
+        <h3>Gym climatizado y cardio</h3>
+        <p>Entrena cómodamente con aire acondicionado y equipo de cardio.</p>
+      </div>
+      <div class="service">
+        <span class="ghost-num">02</span>
+        <h3>Comodidad y limpieza</h3>
+        <p>WiFi gratis, regaderas, vestidores y áreas limpias. Aceptamos tarjetas y ofrecemos dietas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="meander blue"></div>
+
+<section id="planes">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Membresías</p>
+      <h2>Planes y precios</h2>
+      <p>Elige el plan que se ajusta a tu ritmo. Precios en pesos mexicanos.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <h3>Planes principales</h3>
+        <div class="plan-list">
+          <div class="plan-row"><span class="label">Inscripción</span><span class="price">$100</span></div>
+          <div class="plan-row"><span class="label">Mensualidad</span><span class="price">$550</span></div>
+          <div class="plan-row"><span class="label">Estudiantes</span><span class="price">$500</span></div>
+        </div>
+      </div>
+      <div class="plan-card">
+        <h3>Planes flexibles</h3>
+        <div class="plan-list">
+          <div class="plan-row"><span class="label">Dos semanas*</span><span class="price">$380</span></div>
+          <div class="plan-row"><span class="label">Una semana</span><span class="price">$280</span></div>
+          <div class="plan-row"><span class="label">Visita</span><span class="price">$80</span></div>
+        </div>
+      </div>
+      <div class="plan-card">
+        <h3>Incluido en tu acceso</h3>
+        <div class="plan-list">
+          <div class="plan-row"><span class="label">Instructor</span><span class="price">Gratis</span></div>
+          <div class="plan-row"><span class="label">Rutinas</span><span class="price">Gratis</span></div>
+          <div class="plan-row"><span class="label">WiFi</span><span class="price">Gratis</span></div>
+        </div>
+        <p class="plan-note">*El plan de dos semanas comprende 12 días hábiles.</p>
+      </div>
+      <div class="plan-card cta-card">
+        <h3>¿No sabes cuál elegir?</h3>
+        <p>Escríbenos y te ayudamos a encontrar el plan correcto según tu objetivo.</p>
+        <a class="btn-primary" href="https://wa.me/525532679072" target="_blank" rel="noopener">Preguntar →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="horario" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Conoce el gimnasio</p>
+      <h2>Instalaciones reales</h2>
+    </div>
+    <div class="hours-block">
+      <div class="hours-panel">
+        <div class="hours-row"><span class="day">Equipo</span><span class="time">Pesas y cardio</span></div>
+        <div class="hours-row"><span class="day">Ambiente</span><span class="time">Climatizado</span></div>
+        <div class="hours-row"><span class="day">Servicios</span><span class="time">Regaderas y vestidores</span></div>
+      </div>
+      <div class="hours-photo">
+        <img src="images/area-maquinas-2026.png" alt="Área de máquinas de Inmortal Gym">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="galeria" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Nuestro espacio</p>
+      <h2>Conoce Inmortal Gym</h2>
+      <p>Equipo, instalaciones y espacios reales donde vas a entrenar.</p>
+    </div>
+    <div class="gallery-grid">
+      <img src="images/area-pesas-2026.png" alt="Zona de pesas de Inmortal Gym">
+      <img src="images/area-maquinas-2026.png" alt="Equipo de entrenamiento de Inmortal Gym">
+      <img src="images/fachada-2026.png" alt="Fachada de Inmortal Gym">
+      <img src="images/suplementos-2026.png" alt="Suplementos disponibles en Inmortal Gym">
+    </div>
+  </div>
+</section>
+
+<footer class="contact" id="ubicacion">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Visítanos</p>
+      <h2>Contacto</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-col">
+        <h3>Ubicación</h3>
+        <p>Encuéntranos en Google Maps</p>
+        <a href="https://maps.app.goo.gl/2oPcLFR8Xv7XQmBz7" target="_blank" rel="noopener">Ver ubicación →</a>
+      </div>
+      <div class="contact-col">
+        <h3>WhatsApp</h3>
+        <p>55 3267 9072</p>
+        <a href="https://wa.me/525532679072" target="_blank" rel="noopener">Enviar mensaje →</a>
+      </div>
+      <div class="contact-col">
+        <h3>Facebook</h3>
+        <p>Inmortal Gym</p>
+        <a href="https://www.facebook.com/InmortalGym/" target="_blank" rel="noopener">Seguir en Facebook →</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Inmortal Gym</span>
+      <span>Informes: 55 3267 9072</span>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /siteView -->
+
+<!-- ---------- Modal de login ---------- -->
+<div class="modal-backdrop" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeLoginBtn" type="button">&times;</button>
+    <h3>Iniciar sesión</h3>
+    <form id="loginForm">
+      <div class="field">
+        <label>Correo</label>
+        <input type="email" id="loginEmail" required placeholder="admin@admin.com">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="loginPassword" required placeholder="••••••••">
+      </div>
+      <p class="field-error" id="loginError">Correo o contraseña incorrectos.</p>
+      <button class="btn-primary" type="submit">Entrar →</button>
+    </form>
+  </div>
+</div>
+
+<!-- ---------- Panel de administración ---------- -->
+<div id="adminPanel">
+  <div class="admin-topbar">
+    <div class="brand">
+      <img src="images/logo-inmortal-2026.png" alt="Inmortal Gym">
+      <span>Panel de administración</span>
+    </div>
+    <button class="login-btn" id="logoutBtn" type="button">Cerrar sesión</button>
+  </div>
+
+  <div class="wrap" style="padding-top:8px;padding-bottom:80px;">
+    <div class="admin-stats">
+      <div class="admin-stat"><div class="num" id="statTotal">0</div><div class="lbl">Usuarios registrados</div></div>
+      <div class="admin-stat"><div class="num" id="statOk">0</div><div class="lbl">Membresías vigentes</div></div>
+      <div class="admin-stat"><div class="num" id="statLate">0</div><div class="lbl">Vencidas</div></div>
+    </div>
+
+    <form class="admin-form" id="memberForm">
+      <div class="photo-input">
+        <img class="photo-preview" id="photoPreview" src="images/logo-inmortal-2026.png" alt="Foto">
+        <input type="file" id="memberPhoto" accept="image/*">
+      </div>
+      <div class="field">
+        <label>Nombre del usuario</label>
+        <input type="text" id="memberName" required placeholder="Ej. Juan Pérez">
+      </div>
+      <div class="field">
+        <label>WhatsApp</label>
+        <input type="tel" id="memberPhone" required placeholder="55 1234 5678">
+      </div>
+      <div class="field">
+        <label>Tipo de plan</label>
+        <select id="memberPlan">
+          <option value="mensualidad">Mensualidad — $550</option>
+          <option value="estudiante">Estudiantes — $500</option>
+          <option value="dos_semanas">Dos semanas — $380</option>
+          <option value="semana">Semana — $280</option>
+          <option value="visita">Visita — $80</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Monto pagado</label>
+        <input type="number" id="memberAmount" required placeholder="550">
+      </div>
+      <div class="field">
+        <label>Fecha de pago</label>
+        <input type="date" id="memberPayDate" required>
+      </div>
+      <div class="field">
+        <label>Fecha de vencimiento</label>
+        <input type="date" id="memberDueDate" required>
+      </div>
+      <button class="btn-primary" type="submit">+ Agregar usuario</button>
+    </form>
+
+    <div class="admin-tools">
+      <h3>Filtros y mensajes por WhatsApp</h3>
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" type="button" data-filter="all">Todos</button>
+        <button class="filter-btn" type="button" data-filter="active">Activos</button>
+        <button class="filter-btn" type="button" data-filter="soon">Por vencer</button>
+        <button class="filter-btn" type="button" data-filter="inactive">Inactivos</button>
+      </div>
+      <div class="selection-bar">
+        <button class="small-btn" id="selectVisibleBtn" type="button">Seleccionar visibles</button>
+        <button class="small-btn" id="clearSelectionBtn" type="button">Limpiar selección</button>
+        <span id="selectedCount">0 seleccionados</span>
+      </div>
+      <div class="message-grid">
+        <div class="field">
+          <label>Mensaje predeterminado</label>
+          <select id="messageTemplate">
+            <option value="reminder">Recordatorio de vencimiento</option>
+            <option value="expired">Membresía vencida</option>
+            <option value="general">Aviso general</option>
+            <option value="custom">Mensaje nuevo</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mensaje</label>
+          <textarea id="bulkMessage"></textarea>
+          <p class="message-help">Variables disponibles: {nombre}, {plan}, {vence}.</p>
+        </div>
+      </div>
+      <div class="message-actions">
+        <button class="btn-primary" id="prepareMessagesBtn" type="button">Preparar mensajes →</button>
+        <span class="send-summary" id="sendSummary"></span>
+      </div>
+      <div class="wa-queue" id="waQueue"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="members">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="selectAllTable" aria-label="Seleccionar usuarios visibles"></th>
+            <th>Foto</th>
+            <th>Nombre</th>
+            <th>WhatsApp</th>
+            <th>Plan</th>
+            <th>Monto</th>
+            <th>Fecha de pago</th>
+            <th>Vence</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="membersBody">
+          <tr class="empty-row"><td colspan="10">Aún no hay usuarios registrados.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ======= CONFIGURA AQUÍ EL ACCESO DEL ADMIN =======
+  var ADMIN_EMAIL = "admin@admin.com";
+  var ADMIN_PASSWORD = "inmortal2026"; // cámbiala antes de publicar el sitio
+  // ===================================================
+
+  var PLANS = {
+    mensualidad: { label:"Mensualidad", price:550, days:30 },
+    estudiante:  { label:"Estudiantes", price:500, days:30 },
+    dos_semanas: { label:"Dos semanas", price:380, days:12 },
+    semana:      { label:"Semana",      price:280, days:7 },
+    visita:      { label:"Visita",      price:80, days:1 }
+  };
+
+  var STORAGE_KEY = "ifg_members";
+  var SESSION_KEY = "ifg_session";
+
+  function loadMembers(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveMembers(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+
+  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  function addDays(iso, days){
+    var d = new Date(iso + "T00:00:00");
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0,10);
+  }
+  function fmtDate(iso){
+    var d = new Date(iso + "T00:00:00");
+    return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function fmtMoney(n){ return "$" + Number(n).toLocaleString('es-MX'); }
+
+  function statusOf(dueISO){
+    var today = todayISO();
+    var diffDays = (new Date(dueISO) - new Date(today)) / 86400000;
+    if(diffDays < 0) return {cls:"late", txt:"Vencida"};
+    if(diffDays <= 3) return {cls:"soon", txt:"Por vencer"};
+    return {cls:"ok", txt:"Vigente"};
+  }
+
+  var currentFilter = "all";
+  var selectedIds = {};
+  var MESSAGE_TEMPLATES = {
+    reminder: "Hola {nombre}, te recordamos que tu plan {plan} vence el {vence}. Escríbenos si deseas renovarlo. ¡Te esperamos en Inmortal Gym!",
+    expired: "Hola {nombre}, tu membresía de Inmortal Gym ya venció. Renueva tu plan {plan} para seguir entrenando con nosotros.",
+    general: "Hola {nombre}, tenemos un aviso para ti de parte de Inmortal Gym.",
+    custom: ""
+  };
+
+  function normalizePhone(value){
+    var digits = String(value || "").replace(/\D/g, "");
+    if(digits.length === 10) return "52" + digits;
+    return digits;
+  }
+
+  function matchesFilter(member){
+    var cls = statusOf(member.dueDate).cls;
+    if(currentFilter === "active") return cls === "ok" || cls === "soon";
+    if(currentFilter === "soon") return cls === "soon";
+    if(currentFilter === "inactive") return cls === "late";
+    return true;
+  }
+
+  function personalizedMessage(template, member){
+    var plan = PLANS[member.plan] ? PLANS[member.plan].label : member.plan;
+    return template
+      .replace(/\{nombre\}/g, member.name || "")
+      .replace(/\{plan\}/g, plan || "")
+      .replace(/\{vence\}/g, member.dueDate ? fmtDate(member.dueDate) : "");
+  }
+
+  // ---------- Login modal ----------
+  var loginModal = document.getElementById("loginModal");
+  document.getElementById("openLoginBtn").addEventListener("click", function(){
+    loginModal.classList.add("open");
+  });
+  document.getElementById("closeLoginBtn").addEventListener("click", function(){
+    loginModal.classList.remove("open");
+  });
+  loginModal.addEventListener("click", function(e){
+    if(e.target === loginModal) loginModal.classList.remove("open");
+  });
+
+  document.getElementById("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    var pass = document.getElementById("loginPassword").value;
+    var errorEl = document.getElementById("loginError");
+    if(email === ADMIN_EMAIL.toLowerCase() && pass === ADMIN_PASSWORD){
+      sessionStorage.setItem(SESSION_KEY, "1");
+      errorEl.style.display = "none";
+      loginModal.classList.remove("open");
+      enterAdmin();
+    } else {
+      errorEl.style.display = "block";
+    }
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", function(){
+    sessionStorage.removeItem(SESSION_KEY);
+    exitAdmin();
+  });
+
+  function enterAdmin(){
+    document.getElementById("siteView").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+    renderMembers();
+  }
+  function exitAdmin(){
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("siteView").style.display = "block";
+  }
+
+  if(sessionStorage.getItem(SESSION_KEY) === "1"){ enterAdmin(); }
+
+  // ---------- Formulario de miembros ----------
+  var payDateInput = document.getElementById("memberPayDate");
+  var dueDateInput = document.getElementById("memberDueDate");
+  var planSelect = document.getElementById("memberPlan");
+  var amountInput = document.getElementById("memberAmount");
+  payDateInput.value = todayISO();
+
+  function autofillFromPlan(){
+    var plan = PLANS[planSelect.value];
+    amountInput.value = plan.price;
+    dueDateInput.value = addDays(payDateInput.value || todayISO(), plan.days);
+  }
+  planSelect.addEventListener("change", autofillFromPlan);
+  payDateInput.addEventListener("change", autofillFromPlan);
+  autofillFromPlan();
+
+  var photoData = null;
+  document.getElementById("memberPhoto").addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      photoData = ev.target.result;
+      document.getElementById("photoPreview").src = photoData;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("memberForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var members = loadMembers();
+    members.push({
+      id: Date.now(),
+      name: document.getElementById("memberName").value.trim(),
+      phone: document.getElementById("memberPhone").value.trim(),
+      plan: planSelect.value,
+      amount: Number(amountInput.value),
+      payDate: payDateInput.value,
+      dueDate: dueDateInput.value,
+      photo: photoData
+    });
+    saveMembers(members);
+    e.target.reset();
+    payDateInput.value = todayISO();
+    photoData = null;
+    document.getElementById("photoPreview").src = "images/logo-inmortal-2026.png";
+    autofillFromPlan();
+    renderMembers();
+  });
+
+  function updateSelectedCount(){
+    var count = Object.keys(selectedIds).filter(function(id){ return selectedIds[id]; }).length;
+    document.getElementById("selectedCount").textContent = count + (count === 1 ? " seleccionado" : " seleccionados");
+  }
+
+  function renderMembers(){
+    var members = loadMembers();
+    var visible = members.filter(matchesFilter);
+    var tbody = document.getElementById("membersBody");
+    document.getElementById("statTotal").textContent = members.length;
+    document.getElementById("statOk").textContent = members.filter(function(m){ return statusOf(m.dueDate).cls !== "late"; }).length;
+    document.getElementById("statLate").textContent = members.filter(function(m){ return statusOf(m.dueDate).cls === "late"; }).length;
+
+    if(visible.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="10">No hay usuarios en este filtro.</td></tr>';
+      updateSelectedCount();
+      return;
+    }
+    tbody.innerHTML = visible.slice().reverse().map(function(m){
+      var st = statusOf(m.dueDate);
+      var plan = PLANS[m.plan] ? PLANS[m.plan].label : m.plan;
+      var photo = m.photo || "images/logo-inmortal-2026.png";
+      return '<tr>' +
+        '<td><input class="member-check" type="checkbox" data-id="'+m.id+'" '+(selectedIds[m.id] ? 'checked' : '')+' '+(m.phone ? '' : 'disabled title="Agrega un teléfono para enviar WhatsApp"')+'></td>' +
+        '<td><img class="avatar" src="'+photo+'" alt=""></td>' +
+        '<td>'+escapeHtml(m.name)+'</td>' +
+        '<td>'+(m.phone ? escapeHtml(m.phone) : '<span style="color:var(--slate)">Sin teléfono</span>')+'</td>' +
+        '<td>'+escapeHtml(plan)+'</td>' +
+        '<td>'+fmtMoney(m.amount)+'</td>' +
+        '<td>'+fmtDate(m.payDate)+'</td>' +
+        '<td>'+fmtDate(m.dueDate)+'</td>' +
+        '<td><span class="badge '+st.cls+'">'+st.txt+'</span></td>' +
+        '<td><button class="small-btn phone-btn" data-id="'+m.id+'">'+(m.phone ? 'Editar tel.' : 'Agregar tel.')+'</button> <button class="del-btn" data-id="'+m.id+'">Eliminar</button></td>' +
+        '</tr>';
+    }).join("");
+
+    tbody.querySelectorAll(".del-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = Number(btn.getAttribute("data-id"));
+        var updated = loadMembers().filter(function(m){ return m.id !== id; });
+        saveMembers(updated);
+        renderMembers();
+      });
+    });
+    tbody.querySelectorAll(".phone-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = Number(btn.getAttribute("data-id"));
+        var list = loadMembers();
+        var member = list.find(function(m){ return m.id === id; });
+        if(!member) return;
+        var value = window.prompt("WhatsApp de " + member.name + ":", member.phone || "");
+        if(value === null) return;
+        if(normalizePhone(value).length < 10){ window.alert("Ingresa un número de al menos 10 dígitos."); return; }
+        member.phone = value.trim();
+        saveMembers(list);
+        renderMembers();
+      });
+    });
+    tbody.querySelectorAll(".member-check").forEach(function(box){
+      box.addEventListener("change", function(){
+        selectedIds[box.getAttribute("data-id")] = box.checked;
+        updateSelectedCount();
+      });
+    });
+    updateSelectedCount();
+  }
+
+  document.getElementById("filterBar").addEventListener("click", function(e){
+    var btn = e.target.closest(".filter-btn");
+    if(!btn) return;
+    currentFilter = btn.getAttribute("data-filter");
+    document.querySelectorAll(".filter-btn").forEach(function(b){ b.classList.toggle("active", b === btn); });
+    document.getElementById("selectAllTable").checked = false;
+    renderMembers();
+  });
+
+  function selectVisible(checked){
+    loadMembers().filter(matchesFilter).forEach(function(m){ if(m.phone) selectedIds[m.id] = checked; });
+    renderMembers();
+  }
+  document.getElementById("selectVisibleBtn").addEventListener("click", function(){ selectVisible(true); });
+  document.getElementById("clearSelectionBtn").addEventListener("click", function(){ selectedIds = {}; document.getElementById("selectAllTable").checked = false; renderMembers(); });
+  document.getElementById("selectAllTable").addEventListener("change", function(){ selectVisible(this.checked); });
+
+  var templateSelect = document.getElementById("messageTemplate");
+  var bulkMessage = document.getElementById("bulkMessage");
+  function loadTemplate(){ bulkMessage.value = MESSAGE_TEMPLATES[templateSelect.value]; }
+  templateSelect.addEventListener("change", loadTemplate);
+  loadTemplate();
+
+  document.getElementById("prepareMessagesBtn").addEventListener("click", function(){
+    var template = bulkMessage.value.trim();
+    var selected = loadMembers().filter(function(m){ return selectedIds[m.id] && normalizePhone(m.phone); });
+    var queue = document.getElementById("waQueue");
+    var summary = document.getElementById("sendSummary");
+    if(!template){ summary.textContent = "Escribe un mensaje."; queue.classList.remove("open"); return; }
+    if(selected.length === 0){ summary.textContent = "Selecciona al menos un usuario con teléfono."; queue.classList.remove("open"); return; }
+    queue.innerHTML = '<p class="message-help" style="margin-bottom:10px">WhatsApp requiere confirmar cada envío. Abre los chats uno por uno:</p>' + selected.map(function(m){
+      var url = "https://wa.me/" + normalizePhone(m.phone) + "?text=" + encodeURIComponent(personalizedMessage(template, m));
+      return '<div class="wa-item"><span>'+escapeHtml(m.name)+' · '+escapeHtml(m.phone)+'</span><a href="'+url+'" target="_blank" rel="noopener">Abrir WhatsApp →</a></div>';
+    }).join("");
+    summary.textContent = selected.length + (selected.length === 1 ? " mensaje preparado" : " mensajes preparados");
+    queue.classList.add("open");
+  });
+
+  function escapeHtml(str){
+    var d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+  }
+})();
+</script>
+
+</body>
+</html>
